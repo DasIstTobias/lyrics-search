@@ -496,6 +496,7 @@ def search_in_lyrics_and_display(db_path, query, max_matches_limit):
         print("\nNo matching tracks found.")
         return
 
+    clear_screen()
     print(f"\nTop {len(rows)} relevant tracks (max {max_matches_limit}) and their lyrics:")
     print("=" * 40)
     for i, row in enumerate(rows):
