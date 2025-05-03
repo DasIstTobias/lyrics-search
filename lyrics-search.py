@@ -13,9 +13,9 @@ CONFIG_FILENAME = "lyrics-search.conf"
 current_db_path = None
 current_max_matches = DEFAULT_MAX_MATCHES
 config_file_path = ""
-config_available = False # Flag indicating if configuration was (at least partially) loaded
+config_available = False
 
-# --- Configuration for DB Schema (Adjust to your schema!) ---
+# --- Configuration for DB Schema  ---
 TRACKS_TABLE = "tracks"
 TRACK_ID_COL = "id"
 TRACK_TITLE_COL = "name"
@@ -217,11 +217,12 @@ def run_setup():
 def display_main_menu():
     """Displays the main menu with the new order."""
     print("--- Main Menu ---")
-    print("1: Search Lyrics")
-    print("2: Setup")
-    print("3: Get Database (Instructions)")
-    print("4: Use 'lookup' (Instructions)")
-    print("5: Exit Program")
+    print("1: Search by Title/Artist (Fast)")
+    print("2: Search within Lyrics (Slower)")
+    print("3: Setup")
+    print("4: Get Database (Instructions)")
+    print("5: Use 'lookup' (Instructions)")
+    print("6: Exit Program")
     print("-----------------")
 
 def wait_for_enter(message="[ Press Enter to return to menu ]"):
@@ -378,7 +379,7 @@ def main_interactive():
             if not current_db_path:
                 clear_screen(); print("ERROR: No database path configured."); print("Please run Setup (Option 2) first."); wait_for_enter(); continue
             try:
-                clear_screen(); print("--- Search Lyrics ---")
+                clear_screen(); print("--- Search by Title/Artist ---")
                 search_query = input("Search term: ")
                 if not search_query: print("No search term entered."); wait_for_enter(); continue
                 # Call search with current config values
@@ -388,23 +389,37 @@ def main_interactive():
                 else: display_results(found_tracks)
                 wait_for_enter() # Wait after displaying results
             except (KeyboardInterrupt, EOFError): clear_screen(); print("\nSearch cancelled."); wait_for_enter(); continue
+        
+        elif choice == '2':
+            if not current_db_path:
+                clear_screen(); print("ERROR: No database path configured."); print("Please run Setup (Option 2) first."); wait_for_enter(); continue
+            try:
+                clear_screen(); print("--- Search within Lyrics ---")
+                search_query = input("Search term: ")
+                if not search_query:
+                    print("No search term entered."); wait_for_enter(); continue
+                # Search within Lyrics
+                found_tracks = search_in_lyrics_and_display(current_db_path, search_query, current_max_matches)
+                wait_for_enter()
+            except (KeyboardInterrupt, EOFError):
+                clear_screen(); print("\nSearch cancelled."); wait_for_enter(); continue
 
-        elif choice == '2': # Setup (was 4)
+        elif choice == '3': # Setup (was 4)
             run_setup()
             # Loop continues -> Clear + Banner + Menu on next iteration
 
-        elif choice == '3': # DB Instructions (was 3)
+        elif choice == '4': # DB Instructions (was 3)
             clear_screen(); print(db_instructions_text); wait_for_enter()
             # Loop continues -> Clear + Banner + Menu
 
-        elif choice == '4': # Lookup Instructions (new)
+        elif choice == '5': # Lookup Instructions (new)
             clear_screen()
             script_name = os.path.basename(sys.argv[0])
             print(lookup_instructions_text.format(script_name=script_name))
             wait_for_enter()
             # Loop continues -> Clear + Banner + Menu
 
-        elif choice == '5': # Exit Program (was 2, then 4)
+        elif choice == '6': # Exit Program (was 2, then 4)
             clear_screen(); print("Exiting program."); sys.exit(0)
         # *******************************************
 
@@ -451,6 +466,47 @@ def main_lookup(search_term):
         print(json.dumps(result_json, ensure_ascii=False, separators=(',', ':')), file=sys.stdout)
         sys.exit(0)
 
+# --- Search within Lyrics ---
+def search_in_lyrics_and_display(db_path, query, max_matches_limit):
+    import sqlite3, os, sys
+    if not db_path or not os.path.exists(db_path):
+        print(f"ERROR: Database path '{db_path}' invalid or not set.", file=sys.stderr)
+        return
+
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    like_pattern = f"%{query}%"
+    sql = f"""
+        SELECT t."{TRACK_ID_COL}",
+               t."{TRACK_TITLE_COL}" AS name,
+               t."{TRACK_ARTIST_COL}" AS artist_name,
+               l."{LYRICS_TEXT_COL}" AS plain_lyrics
+        FROM "{TRACKS_TABLE}" t
+        JOIN "{LYRICS_TABLE}" l ON t."{TRACK_ID_COL}" = l."{LYRICS_FK_COL}"
+        WHERE l."{LYRICS_TEXT_COL}" LIKE ?
+        LIMIT ?;
+    """
+    cursor.execute(sql, (like_pattern, max_matches_limit))
+    rows = cursor.fetchall()
+    conn.close()
+
+    if not rows:
+        print("\nNo matching tracks found.")
+        return
+
+    print(f"\nTop {len(rows)} relevant tracks (max {max_matches_limit}) and their lyrics:")
+    print("=" * 40)
+    for i, row in enumerate(rows):
+        print(f"Track {i+1} (ID: {row[TRACK_ID_COL]})")
+        print(f"  Title:  {row['name']}")
+        print(f"  Artist: {row['artist_name']}")
+        print("-" * 20)
+        print("  Lyrics:")
+        for line in row['plain_lyrics'].splitlines():
+            print(f"    {line}")
+        print("=" * 40)
 
 # --- Entry Point ---
 if __name__ == "__main__":
