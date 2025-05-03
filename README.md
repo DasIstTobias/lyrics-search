@@ -12,7 +12,7 @@ python lyrics-search.py
 2. Visit https://lrclib.net/db-dumps (External site. I am not affiliated with the site in any way.) to download the latest version of the database as a .gz file.
 3. Unzip the .gz file to a .sqlite3 file.
 4. Run "lyrics-search.py".
-5. Select option 2 “setup”.
+5. Select option 3 “setup”.
 6. Follow the setup instructions.
 
 ## Lookup Argument
