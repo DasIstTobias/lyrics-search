@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='lyrics-search',
-    version='1.2',
+    version='1.3',
     author='tobias@randombytes',
     author_email='placeholder@example.com',
     description='Tool to quickly gather lyrics of songs',
