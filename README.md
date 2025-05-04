@@ -38,7 +38,7 @@ The output will be the first result that is found, together with the song name, 
 3. Move in repository "cd lyrics-search"
 4. Create Build directory "mkdir -p ~/rpmbuild/{SOURCES,SPECS,BUILD,RPMS,SRPMS}"
 5. Create Source "python setup.py sdist --formats=gztar"
-6. Copy Source to Build directory "cp dist/lyrics-search-*.tar.gz ~/rpmbuild/SOURCES/"
+6. Copy Source to Build directory "cp dist/lyrics_search-*.tar.gz ~/rpmbuild/SOURCES/"
 7. Create .spec File "nano ~/rpmbuild/SPECS/lyrics-search.spec". Example File:
    ```lyrics-search.spec
    %define version 1.2
