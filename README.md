@@ -8,15 +8,15 @@ python main.py
 ```
 
 ## Setup
-1. Download the "main.py" script.
+1. Download the "main.py" script or the .rpm Version.
 2. Visit https://lrclib.net/db-dumps (External site. I am not affiliated with the site in any way.) to download the latest version of the database as a .gz file.
 3. Unzip the .gz file to a .sqlite3 file.
-4. Run "python main.py".
-5. Select option 2 “setup”.
+4. Run "python main.py". You can also install the .rpm package and run "lyrics-search".
+5. Select option 3 “setup”.
 6. Follow the setup instructions.
 
 ## Install RPM Package
-1. Download the latest .rpm file from GitHub Releases
+1. Download the latest .rpm file (or build it) from GitHub Releases
 2. Install it via Package manager (DNF, Zypper ...)
 3. Use it with "lyrics-search" instead of "python main.py"
 
@@ -40,7 +40,7 @@ The output will be the first result that is found, together with the song name, 
    %define version 1.2
    %define release 3
 
-   Name:           python3-lyrics-search
+   Name:           lyrics-search
    Version:        %{version}
    Release:        %{release}%{?dist}
    Summary:        Tool to quickly gather lyrics of songs
