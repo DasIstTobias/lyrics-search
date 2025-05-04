@@ -74,9 +74,14 @@ def clear_screen():
 
 # --- Configuration Functions ---
 def get_config_path():
-    """Determines the path to the configuration file in the script directory."""
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(script_dir, CONFIG_FILENAME)
+    """Determines the path to the configuration file under ~/.config/lyrics-search/."""
+    config_dir = os.path.join(
+        os.path.expanduser("~"),
+        ".config",
+        "lyrics-search"
+    )
+    os.makedirs(config_dir, exist_ok=True)
+    return os.path.join(config_dir, CONFIG_FILENAME)
 
 def load_config():
     """Loads the configuration from the file."""
@@ -137,6 +142,7 @@ def save_config(db_path, max_matches):
     """Saves the configuration to the file."""
     global config_file_path, config_available
     config_file_path = get_config_path()
+    os.makedirs(os.path.dirname(config_file_path), exist_ok=True)
     try:
         with open(config_file_path, 'w', encoding='utf-8') as f:
             f.write(f"# Configuration file for Lyric Search Tool\n")
