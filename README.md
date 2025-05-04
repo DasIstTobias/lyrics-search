@@ -41,8 +41,8 @@ The output will be the first result that is found, together with the song name, 
 6. Copy Source to Build directory "cp dist/lyrics_search-*.tar.gz ~/rpmbuild/SOURCES/"
 7. Create .spec File "nano ~/rpmbuild/SPECS/lyrics-search.spec". Example File:
    ```lyrics-search.spec
-   %define version 1.2
-   %define release 3
+   %define version 1.3
+   %define release 4
 
    Name:           lyrics-search
    Version:        %{version}
@@ -51,7 +51,7 @@ The output will be the first result that is found, together with the song name, 
 
    License:        GPLv3
    URL:            https://github.com/DasIstTobias/lyrics-search
-   Source0:        lyrics_search-1.2.tar.gz
+   Source0:        lyrics_search-1.3.tar.gz
 
    BuildRequires:  python3-devel
    BuildRequires:  python3-setuptools
@@ -64,7 +64,7 @@ The output will be the first result that is found, together with the song name, 
    Tool to quickly gather lyrics of songs
 
    %prep
-   %autosetup -n lyrics_search-1.2
+   %autosetup -n lyrics_search-1.3
 
    %build
    %py3_build
