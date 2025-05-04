@@ -21,7 +21,7 @@ lyrics-search
 ## Install RPM Package
 1. Download the latest .rpm file (or build it) from GitHub Releases
 2. Install it via Package manager (DNF, Zypper ...)
-3. Use it with "lyrics-search" instead of "python main.py"
+3. Use it with "lyrics-search" instead of "python main.py"  
 (You can remove the package with your package manager and the package name "lyrics-search")
 
 ## Lookup Argument
